@@ -54,7 +54,7 @@ void listarPermutaciones(string construido, int profundidad = 0) {
 
 int main() {
     string s;
-    std::cin >> s;
+    cin >> s;
     map<char, int> charCount;
 
     for(char &c : s) {
