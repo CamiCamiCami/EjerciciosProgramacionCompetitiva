@@ -7,9 +7,8 @@ bool esReordenable(int cantidad_maximo, int largo) {
   return largo + 1 - cantidad_maximo >= cantidad_maximo;
 }
 
-string reordenaString(Contador& cantidades, char caracterProhibido, int largo) {
-  if (largo == 0) return "";
-
+char siguienteCaracter(Contador& cantidades, char caracterProhibido,
+                       size_t largo) {
   char frecuente, primeraLetraDisponible = '\0';
   int aparicionesMax = 0;
   for (const auto& [letra, apariciones] : cantidades) {
@@ -22,15 +21,23 @@ string reordenaString(Contador& cantidades, char caracterProhibido, int largo) {
     if (apariciones == 0) continue;
     primeraLetraDisponible = letra;
   }
-
   if (!esReordenable(aparicionesMax, largo - 1)) {
-    cantidades[frecuente]--;
-    return frecuente + reordenaString(cantidades, frecuente, largo - 1);
+    return frecuente;
   } else {
-    cantidades[primeraLetraDisponible]--;
-    return primeraLetraDisponible +
-           reordenaString(cantidades, primeraLetraDisponible, largo - 1);
+    return primeraLetraDisponible;
   }
+}
+
+string reordenaString(Contador& cantidades, size_t largo) {
+  string ordenado = "";
+  char caracterProhibido = '\0';
+  while (largo != 0) {
+    caracterProhibido = siguienteCaracter(cantidades, caracterProhibido, largo);
+    cantidades[caracterProhibido]--;
+    ordenado += caracterProhibido;
+    largo--;
+  }
+  return ordenado;
 }
 
 void agregarChar(Contador& charCount, char c) {
@@ -57,6 +64,6 @@ int main() {
   if (!esReordenable(aparicionesMax, s.length())) {
     cout << -1 << '\n';
   } else {
-    cout << reordenaString(cantidades, '\0', s.length()) << '\n';
+    cout << reordenaString(cantidades, s.length()) << '\n';
   }
 }
