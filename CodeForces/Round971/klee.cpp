@@ -1,12 +1,13 @@
 #include <bits/stdc++.h>
 using namespace std;
+#define ll long long
 
 long long sumatoria(long long k, long long n) {
     return (n-1)*k+((n-1)*n)/2;
 }
 
 
-long long buscar(long long inicio, long long fin, long long buscado) {
+ll buscar(ll inicio, ll fin, long long buscado) {
     long long idx1 = (inicio+fin)/2, idx2 = idx1+1;
     long long suma1 = sumatoria(inicio, idx1), suma2 = sumatoria(inicio, idx2);
     if(suma1 <= buscado && buscado <= suma2) {
@@ -16,7 +17,11 @@ long long buscar(long long inicio, long long fin, long long buscado) {
     } else {
         return buscar(inicio, idx1, buscado);
     }
-}   
+}
+
+
+
+ll 
 
 
 int main() {
