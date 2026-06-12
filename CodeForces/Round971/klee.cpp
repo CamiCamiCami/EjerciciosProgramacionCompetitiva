@@ -1,35 +1,69 @@
-#include <bits/stdc++.h>
-using namespace std;
+#include <iostream>
+#include <map>
+#include <queue>
+#include <set>
+#include <utility>
+#include <vector>
 #define ll long long
+#define dd long double
+#define vector std::vector
+#define map std::map
+#define set std::set
+using namespace std;
+using Grafo = vector<vector<pair<ll, ll>>>;
 
-long long sumatoria(long long k, long long n) {
-    return (n-1)*k+((n-1)*n)/2;
+// Desde inclusivo, Hasta no inclusivo
+ll sumatoria(ll desde, ll hasta) {
+    ll suma1 = (desde * (desde - 1)) / 2;
+    ll suma2 = ((hasta - 1) * hasta) / 2;
+    return suma2 - suma1;
 }
 
+ll largo;
+ll K;
+ll N;
 
-ll buscar(ll inicio, ll fin, long long buscado) {
-    long long idx1 = (inicio+fin)/2, idx2 = idx1+1;
-    long long suma1 = sumatoria(inicio, idx1), suma2 = sumatoria(inicio, idx2);
-    if(suma1 <= buscado && buscado <= suma2) {
-        return suma2 - buscado < buscado - suma1 ? idx2 : idx1;
-    } else if(suma2 < buscado) {
-        return idx2 + buscar(idx2, fin, buscado-sumatoria(inicio, idx2));
+ll calculaX(ll idx) {
+    ll suma = sumatoria(K, idx + 1);
+    ll resta = sumatoria(idx + 1, K + N);
+    ll total = suma - resta;
+    return total > 0 ? total : -total;
+}
+
+ll f(ll x) {
+    ll sig = calculaX(x + 1);
+    ll ant = calculaX(x - 1);
+    ll in = calculaX(x);
+    if (ant < in) {
+        return 1;
+    } else if (in > sig) {
+        return -1;
     } else {
-        return buscar(inicio, idx1, buscado);
+        return 0;
     }
 }
 
-
-
-ll 
-
+ll busquedaBinaria(ll desde, ll hasta) {
+    while (desde <= hasta) {
+        ll medio = (desde + hasta) / 2;
+        ll eval = f(medio);
+        if (eval == 0) {
+            return medio;
+        }
+        if (eval > 0) {
+            hasta = medio - 1;
+        } else {
+            desde = medio + 1;
+        }
+    }
+    return -1;
+}
 
 int main() {
     int t;
     cin >> t;
-    while(t--) {
-        long long n, k;
-        cin >> n >> k;
-        cout << buscar(k, k+n-1, sumatoria(k, n)/2) - k + 1 << endl;
+    while (t--) {
+        cin >> N >> K;
+        cout << calculaX(busquedaBinaria(K, K + N - 1)) << endl;
     }
 }

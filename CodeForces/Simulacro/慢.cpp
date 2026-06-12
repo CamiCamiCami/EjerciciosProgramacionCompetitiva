@@ -1,41 +1,50 @@
-#include <bits/stdc++.h>
-using namespace std;
+#include <iostream>
+#include <map>
+#include <queue>
+#include <set>
+#include <utility>
+#include <vector>
 #define ll long long
-#define FORI(i, d, n) for (int i = d; i < n; i++)
+#define dd long double
+#define vector std::vector
+#define map std::map
+#define set std::set
+#define initArr(arr, largo, contenido) \
+    for (int i = 0; i < largo; i++)    \
+        arr[i] = contenido;
+using namespace std;
+using Grafo = vector<vector<pair<ll, ll>>>;
 
 int main() {
-  ll Cnumeros;
-  cin >> Cnumeros;
+    ll largo;
+    cin >> largo;
 
-  vector<ll> numeros(Cnumeros);
-  FORI(i, 0, Cnumeros) {
-    ll n;
-    cin >> n;
-    numeros[i] = n;
-  }
-  sort(numeros.begin(), numeros.end());
-  vector<ll> sumados;
-  vector<ll> numerosSumados;
-  for (ll i = 0, j = 0; i < Cnumeros; i = j) {
-    ll suma = 0;
-    for (; j < Cnumeros && numeros[j] == numeros[i]; j++) {
-      suma += numeros[i];
+    map<ll, ll> numeros;
+    for (ll i = 0; i < largo; i++) {
+        ll num;
+        cin >> num;
+        if (!numeros.count(num))
+            numeros[num] = 0;
+        numeros[num] += num;
     }
-    numerosSumados.push_back(numeros[i]);
-    sumados.push_back(suma);
-  }
 
-  vector<ll> parciales(sumados.size() + 1);
-  parciales[0] = 0;
-  parciales[1] = sumados[0];
-  for (ll i = 1; i < sumados.size(); i++) {
-    if (numerosSumados[i] == (numerosSumados[i - 1] - 1)) {
-      parciales[i + 1] = sumados[i] + parciales[i];
-    } else {
-      ll eligiendo = sumados[i] + parciales[i + 1];
-      parciales[i + 1] = parciales[i] < eligiendo ? eligiendo : parciales[i];
+    ll intermedios[100005];
+    initArr(intermedios, 100005, 0);
+    ll anterior = 0;
+    ll caso = 2;
+    for (const pair<ll, ll>& item : numeros) {
+        ll num = item.first;
+        ll suma = item.second;
+        if (num != anterior + 1) {
+            intermedios[caso] = intermedios[caso - 1] + suma;
+        } else {
+            ll opcion1 = intermedios[caso - 1];
+            ll opcion2 = intermedios[caso - 2] + suma;
+            intermedios[caso] = opcion1 > opcion2 ? opcion1 : opcion2;
+        }
+        anterior = num;
+        caso++;
     }
-  }
 
-  cout << parciales.front() << endl;
+    cout << intermedios[caso - 1] << endl;
 }
