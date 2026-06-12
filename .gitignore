@@ -3,3 +3,4 @@
 !.gitignore
 !*.cpp
 !Grid Path Description/posibles.txt
+!.clang-format
