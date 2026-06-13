@@ -34,19 +34,18 @@ int main() {
         bool puedeGanar = false;
         auto iter = frecuencias.begin();
         ll anterior = iter->first;
-        subarray.push_back(anterior);
-        iter++;
         while (!puedeGanar && iter != frecuencias.end()) {
             ll valor = iter->first;
             ll frecuencia = iter->second;
-            if (!(anterior <= valor + k)) {
-                puedeGanar = (subarray.back() % 2 == 0) || (subarray.size() > 1);
+            if (!(valor <= anterior + k)) {
+                puedeGanar = (subarray.back() % 2L == 0L) || (subarray.size() > 1);
                 subarray.clear();
             }
             subarray.push_back(frecuencia);
             anterior = valor;
             iter++;
         }
+        puedeGanar = puedeGanar || (subarray.back() % 2L == 0L) || (subarray.size() > 1);
         cout << (puedeGanar ? "YES" : "NO") << endl;
     }
 }

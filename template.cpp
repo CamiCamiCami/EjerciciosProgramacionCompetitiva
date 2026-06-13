@@ -6,9 +6,6 @@
 #include <vector>
 #define ll long long
 #define dd long double
-#define vector std::vector
-#define map std::map
-#define set std::set
 #define techo(x, k) ((x + k - 1) / k)
 #define initArr(arr, largo, contenido) \
     for (int i = 0; i < largo; i++)    \
