@@ -1,4 +1,5 @@
 #include <iostream>
+#include <list>
 #include <map>
 #include <queue>
 #include <set>
@@ -11,7 +12,8 @@
     for (int i = 0; i < largo; i++)    \
         arr[i] = contenido;
 using namespace std;
-using Grafo = vector<vector<pair<ll, ll>>>;
+using GrafoPesado = vector<vector<pair<ll, ll>>>;
+using Grafo = vector<vector<ll>>;
 
 int main() {
     ll casos;
