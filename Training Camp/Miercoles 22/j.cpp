@@ -17,8 +17,6 @@ using GrafoPesado = vector<vector<pair<ll, ll>>>;
 using Grafo = vector<vector<ll>>;
 
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
     ll casos;
     cin >> casos;
     while (casos--) {}

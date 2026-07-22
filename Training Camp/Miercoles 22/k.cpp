@@ -17,9 +17,21 @@ using GrafoPesado = vector<vector<pair<ll, ll>>>;
 using Grafo = vector<vector<ll>>;
 
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-    ll casos;
-    cin >> casos;
-    while (casos--) {}
+    int n;
+    cin >> n;
+    int k = n - 10;
+    int ochos = 0;
+    for (int i = 0; i < k; i++) {
+        char numchar;
+        cin >> numchar;
+        if (numchar == '8') {
+            ochos++;
+        }
+    }
+    cin >> n;
+    if ((ochos - (k / 2)) > 0) {
+        cout << "YES" << endl;
+    } else {
+        cout << "NO" << endl;
+    }
 }

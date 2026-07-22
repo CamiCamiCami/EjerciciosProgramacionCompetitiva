@@ -17,9 +17,22 @@ using GrafoPesado = vector<vector<pair<ll, ll>>>;
 using Grafo = vector<vector<ll>>;
 
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-    ll casos;
-    cin >> casos;
-    while (casos--) {}
+    ll n;
+    cin >> n;
+    vector<bool> aparecieron(n, false);
+    ll mesa = 0, maxMesa = 0;
+    forr(0, 2 * n) {
+        ll media;
+        cin >> media;
+        media--;
+        if (aparecieron[media]) {
+            maxMesa = maxMesa > mesa ? maxMesa : mesa;
+            mesa--;
+        } else {
+            aparecieron[media] = true;
+            mesa++;
+        }
+    }
+    maxMesa = maxMesa > mesa ? maxMesa : mesa;
+    cout << maxMesa << '\n';
 }

@@ -17,9 +17,15 @@ using GrafoPesado = vector<vector<pair<ll, ll>>>;
 using Grafo = vector<vector<ll>>;
 
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-    ll casos;
-    cin >> casos;
-    while (casos--) {}
+    ll x, y, z;
+    cin >> x >> y >> z;
+    if (x > y + z) {
+        cout << "+" << endl;
+    } else if (y > x + z) {
+        cout << "-" << endl;
+    } else if (x == y && z == 0) {
+        cout << "0" << endl;
+    } else {
+        cout << "?" << endl;
+    }
 }
