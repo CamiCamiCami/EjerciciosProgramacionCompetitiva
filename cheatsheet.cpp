@@ -9,6 +9,7 @@
 #define vector std::vector
 #define map std::map
 #define set std::set
+#define forr(d, h) for (int i = d; i < h; i++)
 #define techo(x, k) ((x + k - 1) / k)
 using Grafo = vector<vector<pair<ll, ll>>>;
 using namespace std;
@@ -35,6 +36,34 @@ ll busquedaBinaria(ll desde, ll hasta) {
         }
     }
     return -1;
+}
+
+vector<bool> primosEncontrados;
+vector<ll> minDivisor;
+
+ll criba(ll MAX) {
+    primosEncontrados.clear();
+    minDivisor.clear();
+    forr(0, MAX + 1) {
+        primosEncontrados.push_back(true);
+        minDivisor.push_back(i);
+    }
+
+    primosEncontrados[0] = primosEncontrados[1] = false;
+
+    ll cantprimosEncontrados = MAX;
+    for (int p = 2; p * p <= MAX; p++) {
+        if (!primosEncontrados[p])
+            continue;
+        for (int d = p * p; d <= MAX; d += p) {
+            if (primosEncontrados[d]) {
+                primosEncontrados[d] = false;
+                cantprimosEncontrados--;
+                minDivisor[d] = p;
+            }
+        }
+    }
+    return cantprimosEncontrados;
 }
 
 #define MAXN 1000000

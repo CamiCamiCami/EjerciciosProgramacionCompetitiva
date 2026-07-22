@@ -17,7 +17,11 @@ using GrafoPesado = vector<vector<pair<ll, ll>>>;
 using Grafo = vector<vector<ll>>;
 
 int main() {
-    ll casos;
-    cin >> casos;
-    while (casos--) {}
+    ll n;
+    cin >> n;
+    ll resultado = 2;
+    for (int j = 0; j < n; j++)
+        resultado *= 2;
+    resultado -= 2;
+    cout << resultado << endl;
 }
