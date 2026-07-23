@@ -16,13 +16,15 @@ using namespace std;
 using GrafoPesado = vector<vector<pair<ll, ll>>>;
 using Grafo = vector<vector<ll>>;
 
-ll cumple(vector<ll> array, ll aPoner) {
+ll lleganEnTiempo(vector<ll> array, ll aPoner) {
     ll maximaDistancia = 0;
     for (ll i = 0; i < array.size(); i++) {
+        if (array[i] == 0)
+            continue;
         ll num = array[i];
         ll esperado = num - aPoner;
-        ll distancia = esperado - i + 1;
-        maximaDistancia = maximaDistancia > distancia ? distancia : maximaDistancia;
+        ll distancia = i - esperado + 1;
+        maximaDistancia = maximaDistancia > distancia ? maximaDistancia : distancia;
     }
     return maximaDistancia;
 }
@@ -41,32 +43,35 @@ int main() {
     ll enOrden = false;
     for (int i = 1; i <= cant; i++) {
         cin >> num;
+        if (encontro1) {
+            enOrden = enOrden && (num == i - encontro1 + 1);
+            posArray.push_back(num);
+        }
         if (num == 1) {
             encontro1 = i;
             enOrden = true;
         }
         if (!encontro1)
             preArray.push_back(num);
-        if (encontro1) {
-            enOrden = (num == i - encontro1 + 1);
-            posArray.push_back(num);
-        }
+
         array.push_back(num);
     }
 
     if (enOrden) {
-        ll maxDist = cumple(preArray, array.back() + 1);
+        ll maxDist = lleganEnTiempo(preArray, array.back() + 1);
         if (maxDist == 0) {
-            cout << array.size() - posArray.size() << '\n';
+            cout << preArray.size() << '\n';
             return 0;
         }
     }
+
+    ll movimientos = array.size();
     if (encontro1) {
-        ll movimientos = encontro1;
-        movimientos += cumple(posArray, 1);
-        cout << movimientos + array.size() << '\n';
+        movimientos += encontro1;
+        movimientos += lleganEnTiempo(posArray, 1);
+        cout << movimientos << '\n';
     } else {
-        ll movimientos = cumple(array, 1);
-        cout << movimientos + array.size() << '\n';
+        movimientos += lleganEnTiempo(array, 1);
+        cout << movimientos << '\n';
     }
 }
