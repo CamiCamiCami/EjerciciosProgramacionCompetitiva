@@ -7,8 +7,7 @@
 #include <vector>
 #define ll long long
 #define dd long double
-#define forr(i, h) for (ll i = 0; i < h; i++)
-#define forrr(i, d, h) for (ll i = d; i < h; i++)
+#define forr(d, h) for (int i = d; i < h; i++)
 #define techo(x, k) ((x + k - 1) / k)
 #define initArr(arr, largo, contenido) \
     for (int i = 0; i < largo; i++)    \
@@ -22,5 +21,17 @@ int main() {
     cin.tie(nullptr);
     ll casos;
     cin >> casos;
-    while (casos--) {}
+    while (casos--) {
+        ll torres, suma = 0, num;
+        cin >> torres;
+        forr(0, torres) {
+            cin >> num;
+            suma += num;
+        }
+        if (suma % torres == 0) {
+            cout << 0 << '\n';
+        } else {
+            cout << 1 << '\n';
+        }
+    }
 }

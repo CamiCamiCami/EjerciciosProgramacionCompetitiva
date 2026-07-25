@@ -18,34 +18,32 @@ using GrafoPesado = vector<vector<pair<ll, char>>>;
 using Grafo = vector<vector<ll>>;
 
 GrafoPesado digrafo;
-vector<bool> visitados;
 
-ll buscaDistancia(GrafoPesado& g, ll desde, ll hasta) {
-    if (desde == hasta)
-        return 0;
-    visitados[desde] = true;
-
-    vector<tuple<ll, ll, char>> distancias;
-    ll menorDist = 10E9;
-    for (auto [vecino, letra] : g[desde]) {
-        if (visitados[vecino])
-            continue;
-        ll distVecino = buscaDistancia(g, vecino, hasta);
-        menorDist = menorDist > distVecino ? distVecino : menorDist;
-        distancias.push_back({distVecino, vecino, letra});
-    }
-    for (auto [dist, vecino, letra] : distancias) {
-        if (dist == menorDist) {
-            digrafo[desde].push_back({vecino, letra});
-        }
-    }
-    return menorDist + 1;
-}
 
 void digrafear(GrafoPesado& g) {
     digrafo = GrafoPesado(g.size());
-    visitados = vector<bool>(g.size(), false);
-    buscaDistancia(g, 1, g.size() - 1);
+    vector<ll> distancias(g.size(), -2);
+    vector<bool> visitados(g.size(), false);
+    queue<ll> q;
+    q.push(g.size() - 1);
+    distancias[g.size() - 1] = 0;
+    while(!q.empty()) {
+        ll actual = q.front();
+        ll distActual = distancias[actual];
+        q.pop();
+        visitados[actual] = true;
+
+        for(auto [vecino, letra] : g[actual]){
+            if(distancias[vecino] == distActual-1) {
+                digrafo[actual].push_back({vecino, letra});
+            }
+            if(distancias[vecino] == -2 || distancias[vecino] > distActual+1) {
+                
+            }
+        }
+
+
+    }
 }
 
 vector<ll> menorCamino;
