@@ -1,4 +1,5 @@
 #include <iostream>
+#include <list>
 #include <map>
 #include <queue>
 #include <set>
@@ -6,15 +7,20 @@
 #include <vector>
 #define ll long long
 #define dd long double
-#define vector std::vector
-#define map std::map
-#define set std::set
-#define forr(d, h) for (int i = d; i < h; i++)
+#define forr(i, h) for (ll i = 0; i < h; i++)
+#define forrr(i, d, h) for (ll i = d; i < h; i++)
 #define techo(x, k) ((x + k - 1) / k)
-using Grafo = vector<vector<pair<ll, ll>>>;
+#define initArr(arr, largo, contenido) \
+    for (int i = 0; i < largo; i++)    \
+        arr[i] = contenido;
 using namespace std;
+using GrafoPesado = vector<vector<pair<ll, ll>>>;
+using Grafo = vector<vector<ll>>;
+using Arbol = vector<vector<ll>>;
 
 int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
     ll casos;
     cin >> casos;
     while (casos--) {}
@@ -152,4 +158,58 @@ long long solve(long long min_val, long long max_val) {
     }
 
     return ans;  // Al final del ciclo, 'ans' tiene el primer 'true'
+}
+
+ll maximaDistancia(Grafo& g, ll desde) {
+    vector<bool> visitados(g.size(), false);
+    vector<ll> distancia(g.size());
+    queue<ll> q;
+    ll maximaDistancia = 0;
+    q.push(desde);
+    while (!q.empty()) {
+        ll actual = q.front();
+        q.pop();
+        if (visitados[actual])
+            continue;
+        visitados[actual] = true;
+        maximaDistancia = distancia[actual] > maximaDistancia ? distancia[actual] : maximaDistancia;
+        for (ll vecino : g[actual]) {
+            if (visitados[vecino])
+                continue;
+            distancia[vecino] = distancia[actual] + 1;
+            q.push(vecino);
+        }
+    }
+    return maximaDistancia;
+}
+
+void enraizar(Arbol& g, ll raiz) {
+    vector<bool> visitados(g.size(), false);
+    queue<ll> q;
+    q.push(raiz);
+    while (!q.empty()) {
+        ll actual = q.front();
+        q.pop();
+        visitados[actual] = true;
+        vector<ll> hijos;
+        for (ll vecino : g[actual]) {
+            if (visitados[vecino])
+                continue;
+            hijos.push_back(vecino);
+            q.push(vecino);
+        }
+        g[actual] = hijos;
+    }
+}
+
+ll calcularCentroide(Arbol& g) {
+    ll minMaxDist = 10E9, centroide = -1;
+    forr(nodo, g.size()) {
+        ll maxDist = maximaDistancia(g, nodo);
+        if (minMaxDist > maxDist) {
+            minMaxDist = maxDist;
+            centroide = nodo;
+        }
+    }
+    return centroide;
 }
