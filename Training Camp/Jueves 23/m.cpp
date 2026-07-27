@@ -4,11 +4,13 @@
 #include <map>
 #include <queue>
 #include <set>
+#include <stack>
 #include <utility>
 #include <vector>
 #define ll long long
 #define dd long double
-#define forr(d, h) for (int i = d; i < h; i++)
+#define forr(i, h) for (ll i = 0; i < h; i++)
+#define forrr(i, d, h) for (ll i = d; i < h; i++)
 #define techo(x, k) ((x + k - 1) / k)
 #define initArr(arr, largo, contenido) \
     for (int i = 0; i < largo; i++)    \
@@ -16,53 +18,30 @@
 using namespace std;
 using GrafoPesado = vector<vector<pair<ll, ll>>>;
 using Grafo = vector<vector<ll>>;
+using Arbol = vector<vector<ll>>;
 
-bool f1(long long x, ll n, ll l, vector<ll> v) {
+vector<ll> arr;
 
-    return (n + v[x]) >= l;
-};
-
-bool f2(long long x, ll n, ll r, vector<ll> v) {
-
-    return (n + v[x]) > r;
-};
-
-long long solve(long long min_val, long long max_val, ll n, ll l, vector<ll> v) {
-    long long L = min_val;
-    long long R = max_val;
-    long long ans = -1;  // Guarda la mejor respuesta encontrada hasta ahora
-    while (L <= R) {
-        // L + (R - L) / 2 previene overflow que pasaría si usas (L + R) / 2
-        long long mid = L + (R - L) / 2;
-
-        if (f1(mid, n, l, v)) {
-            ans = mid;    // mid es válido, lo guardamos como posible respuesta
-            R = mid - 1;  // Como queremos el menor valor, buscamos más a la izquierda
-        } else {
-            L = mid + 1;  // mid no es válido (dio false), buscamos a la derecha
-        }
-    }
-
-    return ans;  // Al final del ciclo, 'ans' tiene el primer 'true'
+ll f(ll actual, ll busca) {
+    return arr[actual] < busca;
 }
 
-long long solve2(long long min_val, long long max_val, ll n, ll l, vector<ll> v) {
+long long solve(long long min_val, long long max_val, ll busca) {
     long long L = min_val;
     long long R = max_val;
-    long long ans = -1;  // Guarda la mejor respuesta encontrada hasta ahora
+    long long ans = -1;
     while (L <= R) {
-        // L + (R - L) / 2 previene overflow que pasaría si usas (L + R) / 2
         long long mid = L + (R - L) / 2;
-
-        if (f2(mid, n, l, v)) {
-            ans = mid;    // mid es válido, lo guardamos como posible respuesta
-            R = mid - 1;  // Como queremos el menor valor, buscamos más a la izquierda
+        bool cumple = f(mid, busca);
+        if (cumple) {
+            ans = mid;
+            L = mid + 1;
         } else {
-            L = mid + 1;  // mid no es válido (dio false), buscamos a la derecha
+            R = mid - 1;
         }
     }
 
-    return ans - 1;  // Al final del ciclo, 'ans' tiene el primer 'true'
+    return ans;
 }
 
 int main() {
@@ -71,31 +50,36 @@ int main() {
     ll casos;
     cin >> casos;
     while (casos--) {
-        ll n, l, r;
-        cin >> n >> l >> r;
-        vector<ll> nums;
-        ll num;
-        forr(0, n) {
-            cin >> num;
-            nums.push_back(num);
+        arr.clear();
+        ll largo, desde, hasta;
+        cin >> largo >> desde >> hasta;
+        forr(i, largo) {
+            ll n;
+            cin >> n;
+            arr.push_back(n);
         }
-        sort(nums.begin(), nums.end());
-        nums.push_back(r);
-        ll min = 1, izq, der;
-        ll max = n + 1;
-        ll suma = 0;
-        bool terminar = false;
-        for (int i = 0; i < n && !terminar; i++) {
-            izq = solve(min, max, nums[i], l, nums);
-            der = solve2(min, max, nums[i], r, nums);
-            if (izq < 0 || der < 0) {
-                terminar = true;
-            } else if (izq <= der) {
-                suma += (der - izq + 1);
+        sort(arr.begin(), arr.end());
+
+        ll indices = 0;
+        forr(i, largo) {
+            ll valor = arr[i];
+            ll repetidos = 1;
+            while (i + 1 < largo && arr[i + 1] == valor) {
+                i++;
+                repetidos++;
             }
-            min++;
-            max = der + 1;
+            if (desde <= valor + valor && valor + valor <= hasta) {
+                indices += (repetidos * (repetidos - 1)) / 2;
+            }
+
+            ll desdeSuma = solve(i + 1, arr.size() - 1, desde - valor);
+            if (desdeSuma == -1)
+                desdeSuma = i;
+            ll hastaSuma = solve(i + 1, arr.size() - 1, hasta - valor + 1);
+            if (hastaSuma == -1)
+                hastaSuma = i;
+            indices += (hastaSuma - desdeSuma) * repetidos;
         }
-        cout << suma << '\n';
+        cout << indices << endl;
     }
 }

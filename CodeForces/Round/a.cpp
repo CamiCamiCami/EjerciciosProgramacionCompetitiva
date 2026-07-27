@@ -25,5 +25,26 @@ int main() {
     cin.tie(nullptr);
     ll casos;
     cin >> casos;
-    while (casos--) {}
+    while (casos--) {
+        ll bolsas;
+        cin >> bolsas;
+        vector<ll> bolsa(bolsas);
+        forr(i, bolsas) {
+            cin >> bolsa[i];
+        }
+        if (bolsas % 2 == 1) {
+            cout << "NO\n";
+            continue;
+        }
+        bool sePuede = true;
+
+        ll menorMayor = 10E9 + 1, mayorMenor = 0;
+        for (ll i = 0; i < bolsas && sePuede; i += 2) {
+            sePuede = sePuede && bolsa[i] >= bolsa[i + 1];
+            menorMayor = min(menorMayor, bolsa[i]);
+            mayorMenor = max(mayorMenor, bolsa[i + 1]);
+        }
+        sePuede = sePuede && (mayorMenor + 1) < menorMayor;
+        cout << (sePuede ? "YES\n" : "NO\n");
+    }
 }
