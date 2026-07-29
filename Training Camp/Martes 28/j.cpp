@@ -16,7 +16,6 @@
     for (int i = 0; i < largo; i++)    \
         arr[i] = contenido;
 using namespace std;
-using Par = pair<ll, ll>;
 using GrafoPesado = vector<vector<pair<ll, ll>>>;
 using Grafo = vector<vector<ll>>;
 using Arbol = vector<vector<ll>>;
@@ -26,5 +25,22 @@ int main() {
     cin.tie(nullptr);
     ll casos;
     cin >> casos;
-    while (casos--) {}
+    while (casos--) {
+        int n, i = 1, j = 0;
+        bool terminar = false;
+        cin >> n;
+        for (i = 1; i <= n && !terminar;) {
+            int guardar = i;
+            for (int mult = 1; mult < 10; mult++) {
+                if (i * mult <= n) {
+                    j++;
+                } else {
+                    terminar = true;
+                }
+            }
+            i = (guardar * 10) + 1;
+        }
+
+        cout << j << '\n';
+    }
 }

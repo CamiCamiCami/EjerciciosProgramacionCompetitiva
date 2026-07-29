@@ -16,91 +16,84 @@
     for (int i = 0; i < largo; i++)    \
         arr[i] = contenido;
 using namespace std;
-using GrafoPesado = vector<vector<pair<ll, pair<int, int>>>>;
+using Par = pair<ll, ll>;
+using GrafoPesado = vector<vector<pair<ll, pair<ll, ll>>>>;
 using Grafo = vector<vector<ll>>;
 using Arbol = vector<vector<ll>>;
 
-pair<int, int> operator+(pair<int, int>& a, pair<int, int>& b) {
+Par operator+(Par& a, Par& b) {
     return {a.first + b.first, a.second + b.second};
 }
 
-bool operator==(pair<int, int>& a, pair<int, int>& b) {
+bool operator==(Par& a, Par& b) {
     return a.first == b.first && a.second == b.second;
 }
 
-bool buscarBucle(GrafoPesado& g, ll desde) {
-    vector<bool> alcanzados(g.size(), false);
-    vector<pair<int, int>> alcanzadoEnCopia(g.size());
+char matriz[1500][1500];
+Par alcanzadoEnPantalla[1500][1500];
+int alto, ancho;
 
-    queue<ll> q;
+bool buscarBucle(Par desde) {
+    queue<Par> q;
+    alcanzadoEnPantalla[desde.first][desde.second] = {0, 0};
+    matriz[desde.first][desde.second] = 'V';
     q.push(desde);
     bool encontroBucle = false;
     while (!q.empty() && !encontroBucle) {
-        ll actual = q.front();
+        auto actual = q.front();
         q.pop();
 
-        for (auto [vecino, mov] : g[actual]) {
-            if (alcanzados[vecino] && alcanzadoEnCopia[actual] + mov != alcanzadoEnCopia[vecino]) {
+        for (auto mov : {pair{0, 1}, {1, 0}, {-1, 0}, {0, -1}}) {
+            auto [nuevoY, nuevoX] = actual + mov;
+            auto pantalla = alcanzadoEnPantalla[actual.first][actual.second];
+            if (nuevoY < 0) {
+                nuevoY = alto - 1;
+                pantalla.first++;
+            } else if (nuevoY == alto) {
+                nuevoY = 0;
+                pantalla.first--;
+            }
+            if (nuevoX < 0) {
+                nuevoX = ancho - 1;
+                pantalla.second--;
+            } else if (nuevoX == ancho) {
+                nuevoX = 0;
+                pantalla.second++;
+            }
+            Par nuevo = {nuevoY, nuevoX};
+            if (matriz[nuevoY][nuevoX] == '#')
+                continue;
+            if (matriz[nuevoY][nuevoX] != 'V') {
+                matriz[nuevoY][nuevoX] = 'V';
+                alcanzadoEnPantalla[nuevo.first][nuevo.second] = pantalla;
+                q.push(nuevo);
+            } else if (pantalla != alcanzadoEnPantalla[nuevo.first][nuevo.second]) {
                 encontroBucle = true;
                 break;
-            }
-            if (!alcanzados[vecino]) {
-                alcanzadoEnCopia[vecino] = alcanzadoEnCopia[actual] + mov;
-                alcanzados[vecino] = true;
-                q.push(vecino);
             }
         }
     }
     return encontroBucle;
 }
 
-ll matriz[1500][1500];
-GrafoPesado g;
-
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    ll altura, ancho;
+    Par inicio;
 
-    cin >> altura >> ancho;
+    cin >> alto >> ancho;
     ll pasillos = 0;
     ll nodoInicio;
 
-    forr(i, altura) {
+    forr(i, alto) {
         forr(j, ancho) {
-            char c;
-            cin >> c;
-            if (c == 'S')
-                nodoInicio = pasillos;
-            if (c != '#') {
-                ll nodo = matriz[i][j] = pasillos++;
-                g.push_back(vector<pair<ll, pair<int, int>>>());
-                if (i > 0 && matriz[i - 1][j] != -1) {
-                    g[nodo].push_back({matriz[i - 1][j], {0, 0}});
-                    g[matriz[i - 1][j]].push_back({nodo, {0, 0}});
-                }
-                if (j > 0 && matriz[i][j - 1] != -1) {
-                    g[nodo].push_back({matriz[i][j - 1], {0, 0}});
-                    g[matriz[i][j - 1]].push_back({nodo, {0, 0}});
-                }
-            } else {
-                matriz[i][j] = -1;
+            cin >> matriz[i][j];
+            if (matriz[i][j] == 'S') {
+                inicio = {i, j};
             }
         }
     }
 
-    forr(j, ancho) {
-        if (matriz[0][j] != -1 && matriz[altura - 1][j] != -1) {
-            ll arriba = matriz[0][j], abajo = matriz[altura - 1][j];
-            g[arriba].push_back({abajo, {0, 1}});
-            g[abajo].push_back({arriba, {0, -1}});
-        }
-        if (matriz[j][0] != -1 && matriz[j][ancho - 1] != -1) {
-            ll izquierda = matriz[j][0], derecha = matriz[j][ancho - 1];
-            g[izquierda].push_back({derecha, {-1, 0}});
-            g[derecha].push_back({izquierda, {1, 0}});
-        }
-    }
-    bool infinito = buscarBucle(g, nodoInicio);
+    bool infinito = buscarBucle(inicio);
     cout << (infinito ? "Yes" : "No") << endl;
 }
