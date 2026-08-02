@@ -27,7 +27,7 @@ vector<ll> profundidades;
 ll buscarRepresentante(ll i) {
     if (predecesores[i] == i)
         return i;
-    return buscarRepresentante(predecesores[i]);
+    return predecesores[i] = buscarRepresentante(predecesores[i]);
 }
 
 void unirConjuntos(ll e1, ll e2) {
@@ -68,12 +68,13 @@ int main() {
         sort(aristas.begin(), aristas.end());
 
         ll maximoPeso = 0;
-        ll menorDistancia = 10000000;
+        ll menorDistancia = 1E10;
         ll cambiosForzados = 0;
         for (auto [peso, v1, v2] : aristas) {
-            menorDistancia = min(menorDistancia, (peso - k > 0 ? peso - k : k - peso));
+            menorDistancia = min(menorDistancia, (k - peso >= 0 ? k - peso : peso - k));
             if (buscarRepresentante(v1) == buscarRepresentante(v2))
                 continue;
+
             maximoPeso = max(maximoPeso, peso);
             if (peso > k)
                 cambiosForzados += peso - k;
