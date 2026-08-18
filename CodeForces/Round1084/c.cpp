@@ -24,13 +24,23 @@ using Arbol = vector<vector<ll>>;
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    ll tarda, problemas;
-    cin >> problemas >> tarda;
-    ll tiempo = (4 * 60) - tarda;
-    ll resuelve = 0;
-    while ((resuelve + 1) * 5 <= tiempo && resuelve < problemas) {
-        resuelve++;
-        tiempo -= resuelve * 5;
+    ll casos;
+    cin >> casos;
+    while (casos--) {
+        ll largo;
+        string anterior = "", actual;
+        cin >> largo >> actual;
+        while (anterior != actual) {
+            anterior = actual;
+            actual = "";
+            forr(i, anterior.size()) {
+                if (i + 1 == anterior.size() || anterior[i] != anterior[i + 1]) {
+                    actual += anterior[i];
+                } else {
+                    i++;
+                }
+            }
+        }
+        cout << (actual == "" ? "YES" : "NO") << endl;
     }
-    cout << resuelve << endl;
 }
