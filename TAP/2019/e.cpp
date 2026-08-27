@@ -1,10 +1,8 @@
-#include <algorithm>
 #include <iostream>
 #include <list>
 #include <map>
 #include <queue>
 #include <set>
-#include <stack>
 #include <utility>
 #include <vector>
 #define ll long long
@@ -16,19 +14,18 @@
     for (int i = 0; i < largo; i++)    \
         arr[i] = contenido;
 using namespace std;
-using Par = pair<ll, ll>;
-using GrafoPesado = vector<vector<pair<ll, ll>>>;
-using Grafo = vector<vector<ll>>;
-using Arbol = vector<vector<ll>>;
 
 int main() {
-#ifdef LOCAL
-    freopen("input.txt", "r", stdin);
-#endif
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    ll casos;
-    while (cin >> casos) {
-        while (casos--) {}
-    }
+    vector<pair<ll, ll>> puntos;
+    vector<ll> radios;
+    ll n, m, x, y;
+    cin >> n >> m >> x >> y;
+    if ((n + m) * (m * x + n * y) > 2 * (x + y) * n * m)
+        cout << "A" << '\n';
+    else if ((n + m) * (m * x + n * y) < 2 * (x + y) * n * m)
+        cout << "B" << '\n';
+    else
+        cout << "C" << '\n';
 }

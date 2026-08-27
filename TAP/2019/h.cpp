@@ -28,7 +28,6 @@ int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
     ll casos;
-    while (cin >> casos) {
-        while (casos--) {}
-    }
+    cin >> casos;
+    while (casos--) {}
 }
