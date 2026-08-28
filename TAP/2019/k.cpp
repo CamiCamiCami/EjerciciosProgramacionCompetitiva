@@ -28,10 +28,10 @@ int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
     ll cantantes;
-
     while (cin >> cantantes) {
         priority_queue<pair<ll, ll>, vector<pair<ll, ll>>, greater<pair<ll, ll>>> inicios, finales;
         vector<char> escuelas;
+        vector<ll> id2inicios;
         forr(alumnos, cantantes) {
             char escuela;
             ll ini, fin;
@@ -39,6 +39,7 @@ int main() {
             inicios.push({ini, alumnos});
             finales.push({fin, alumnos});
             escuelas.push_back(escuela);
+            id2inicios.push_back(ini);
         }
         vector<bool> cerrado(cantantes, false);
         queue<pair<ll, ll>> daniAbiertos, javiAbiertos;
@@ -67,7 +68,8 @@ int main() {
                             javiAbiertos.pop();
                     }
                 }
-                maxRango = max(maxRango, hasta - desde - 1);
+                ll rangoCerrado = hasta - max(id2inicios[alumno], desde) - 1;
+                maxRango = max(maxRango, rangoCerrado);
             } else {
                 auto [desde, alumno] = inicios.top();
                 inicios.pop();
