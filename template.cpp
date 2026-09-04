@@ -23,7 +23,7 @@ using Arbol = vector<vector<ll>>;
 
 int main() {
 #ifdef LOCAL
-    freopen("input.txt", "r", stdin);
+    freopen(FILE_DIR, "r", stdin);
 #endif
     ios::sync_with_stdio(false);
     cin.tie(nullptr);

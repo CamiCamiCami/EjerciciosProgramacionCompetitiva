@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <iomanip>
 #include <iostream>
 #include <list>
 #include <map>
@@ -21,25 +22,38 @@ using GrafoPesado = vector<vector<pair<ll, ll>>>;
 using Grafo = vector<vector<ll>>;
 using Arbol = vector<vector<ll>>;
 
+ll maxSumSubarrK(vector<ll> vec, ll k) {
+    ll suma = 0;
+    forr(i, k) {
+        suma += vec[i];
+    }
+    ll maxSuma = suma;
+    forrr(i, k, vec.size()) {
+        suma = suma - vec[i - k] + vec[i];
+        maxSuma = max(maxSuma, suma);
+    }
+    return maxSuma;
+}
+
 int main() {
 #ifdef LOCAL
     freopen(FILE_DIR, "r", stdin);
 #endif
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    ll n, m;
+    ll n, k;
     while (cin >> n) {
-        cin >> m;
-        vector<ll> fichas(m);
-        ll maximo = 0;
+        cin >> k;
+        vector<ll> vec;
         forr(i, n) {
-            cin >> fichas[i];
-            maximo = max(maximo, fichas[i]);
+            ll num;
+            cin >> num;
+            vec.push_back(num);
         }
-
-        vector<ll> numeros(maximo + 1, 0);
-        for (ll e : fichas) {
-            numeros[e]++;
+        double suma = 0;
+        forrr(i, k, n + 1) {
+            suma = max(suma, ((double)maxSumSubarrK(vec, i)) / ((double)i));
         }
+        cout << fixed << setprecision(15) << suma << endl;
     }
 }
