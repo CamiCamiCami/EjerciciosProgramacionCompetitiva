@@ -47,14 +47,21 @@ void EncuentraDistancias(GrafoPesado& g, ll centro) {
 vector<ll> menorCamino;
 vector<char> menorString;
 
+struct NodoCola {
+    int nodo;
+    int padre;
+    char letra;
+};
+
 void menosLexicografico(GrafoPesado& g, ll desde, ll hasta) {
     vector<ll> anterior(g.size());
     vector<char> letraLlegada(g.size());
-    queue<tuple<ll, ll, char>> nivel, sigs;
+    queue<NodoCola> nivel;
     nivel.push({desde, -1, ' '});
     ll distActual = distancias[desde];
     char minimoNivel = ' ';
     while (!nivel.empty()) {
+        queue<NodoCola> sigs;
         char siguienteMinimo = 'z';
         while (!nivel.empty()) {
             auto [act, ant, car] = nivel.front();
@@ -70,8 +77,7 @@ void menosLexicografico(GrafoPesado& g, ll desde, ll hasta) {
                 sigs.push({vecino, act, letra});
             }
         }
-        nivel = sigs;
-        sigs = queue<tuple<ll, ll, char>>();
+        nivel = move(sigs);
         minimoNivel = siguienteMinimo;
         distActual--;
     }
