@@ -6,7 +6,7 @@
 #include <set>
 #include <utility>
 #include <vector>
-#define ll int
+#define ll long long
 #define dd long double
 #define forr(d, h) for (int i = d; i < h; i++)
 #define techo(x, k) ((x + k - 1) / k)
@@ -16,7 +16,7 @@
 using namespace std;
 
 struct Edge {
-    int to;
+    ll to;
     char c;
 };
 
@@ -47,38 +47,43 @@ void EncuentraDistancias(GrafoPesado& g, ll centro) {
 vector<ll> menorCamino;
 vector<char> menorString;
 
-struct NodoCola {
-    int nodo;
-    int padre;
-    char letra;
-};
-
 void menosLexicografico(GrafoPesado& g, ll desde, ll hasta) {
     vector<ll> anterior(g.size());
     vector<char> letraLlegada(g.size());
-    queue<NodoCola> nivel;
-    nivel.push({desde, -1, ' '});
+    queue<ll> nivel;
+    nivel.push(desde);
     ll distActual = distancias[desde];
-    char minimoNivel = ' ';
+    anterior[desde] = -1;
+    letraLlegada[desde] = ' ';
+    vector<bool> visitados(g.size(), false);
+
     while (!nivel.empty()) {
-        queue<NodoCola> sigs;
-        char siguienteMinimo = 'z';
-        while (!nivel.empty()) {
-            auto [act, ant, car] = nivel.front();
+        queue<ll> sigs;
+        char minimoNivel = 'z';
+        ll totalInicial = nivel.size();
+        for (ll i = 0; i < totalInicial; i++) {
+            ll act = nivel.front();
             nivel.pop();
-            if (car != minimoNivel)
-                continue;
-            anterior[act] = ant;
-            letraLlegada[act] = minimoNivel;
             for (auto [vecino, letra] : g[act]) {
                 if (distancias[vecino] >= distActual)
                     continue;
-                siguienteMinimo = min(siguienteMinimo, letra);
-                sigs.push({vecino, act, letra});
+                minimoNivel = min(minimoNivel, letra);
+            }
+            nivel.push(act);
+        }
+        while (!nivel.empty()) {
+            ll act = nivel.front();
+            nivel.pop();
+            for (auto [vecino, letra] : g[act]) {
+                if (distancias[vecino] >= distActual || letra != minimoNivel || visitados[vecino])
+                    continue;
+                sigs.push(vecino);
+                visitados[vecino] = true;
+                anterior[vecino] = act;
+                letraLlegada[vecino] = minimoNivel;
             }
         }
         nivel = move(sigs);
-        minimoNivel = siguienteMinimo;
         distActual--;
     }
     menorCamino.clear();
