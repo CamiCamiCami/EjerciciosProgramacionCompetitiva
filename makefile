@@ -13,7 +13,7 @@ debug: compile
 	gdb -x ./comandosGDB ./$(OUT_NAME)
 
 compile: $(FILE)
-	g++ $(FILE) -DLOCAL -DFILE_DIR='"./$(IN_NAME)"' -g -fsanitize=address,undefined -o $(OUT_NAME)
+	g++ $(FILE) -DLOCAL -DFILE_DIR='"./$(IN_NAME)"' -g -fsanitize=address,undefined -o $(OUT_NAME) -std=c++17
 
 fill:
 	mkdir $(DIR)
