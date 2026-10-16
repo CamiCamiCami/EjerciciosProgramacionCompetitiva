@@ -13,7 +13,7 @@
 #define forrr(i, d, h) for (ll i = d; i < h; i++)
 #define techo(x, k) ((x + k - 1) / k)
 #define endl '\n'
-#define initArr(arr, largo, contenido)                                                                                                               \
+#define initArr(arr, largo, contenido)                                                                                 \
     for (int i = 0; i < largo; i++) arr[i] = contenido;
 using namespace std;
 using Par = pair<ll, ll>;
@@ -22,6 +22,7 @@ using Grafo = vector<vector<ll>>;
 using Digrafo = vector<vector<pair<ll, bool>>>;
 using Arbol = vector<vector<ll>>;
 
+#define peso(e1, e2) (e1 == e2 ? 2 : 1)
 int main() {
 #ifdef LOCAL
     freopen(FILE_DIR, "r", stdin);
@@ -36,25 +37,29 @@ int main() {
             vector<ll> empresasIzq(edificios), empresasDer(edificios);
             forr(i, edificios) { cin >> empresasIzq[i]; }
             forr(i, edificios) { cin >> empresasDer[i]; }
-            vector<ll> caminosIzq(edificios), caminosDer(edificios), caminosDobles(edificios), caminosParalelos(edificios);
-            caminosDobles[0] = caminosDer[0] = caminosIzq[0] = empresasIzq[0] == empresasDer[0] ? 2 : 1;
-            caminosParalelos[0] = 0;
-            forrr(i, 1, edificios) {
-                ll horizontal = empresasIzq[i] == empresasDer[i] ? 2 : 1;
-                ll diag = empresasIzq[i - 1] == empresasDer[i] ? 2 : 1;
-                ll antidiag = empresasIzq[i] == empresasDer[i - 1] ? 2 : 1;
-                caminosDobles[i] = caminosDobles[i - 1] + diag + antidiag;
-                ll ambasPrll = diag + antidiag + caminosParalelos[i - 1];
-                ll diagPrll = max(diag + caminosIzq[i - 1], antidiag + caminosDer[i - 1]);
-                ll doblePrll = max(diag, antidiag) + caminosDobles[i - 1];
-                caminosParalelos[i] = max(ambasPrll, max(diagPrll, doblePrll));
-                caminosIzq[i] = horizontal + diag + max(caminosDobles[i - 1], caminosIzq[i - 1]);
-                caminosDer[i] = horizontal + antidiag + max(caminosDobles[i - 1], caminosDer[i - 1]);
+            vector<ll> cruzadosDesde(edificios), cambiaEn(edificios);
+            cruzadosDesde[edificios - 1] = peso(empresasIzq[edificios - 1], empresasDer[edificios - 1]);
+            for (ll i = edificios - 2; i >= 0; i--) {
+                ll diag = peso(empresasIzq[i + 1], empresasDer[i]);
+                ll antidiag = peso(empresasIzq[i], empresasDer[i + 1]);
+                cruzadosDesde[i] = cruzadosDesde[i + 1] + diag + antidiag;
             }
-            caminosParalelos[edificios - 1] += empresasIzq[edificios - 1] == empresasDer[edificios - 1] ? 2 : 1;
-            ll resultadoFinal =
-                max(max(caminosIzq[edificios - 1], caminosDer[edificios - 1]), max(caminosParalelos[edificios - 1], caminosDobles[edificios - 1]));
-            cout << resultadoFinal << endl;
+
+            ll rectoHasta = 0;
+            forr(i, edificios - 1) {
+                cambiaEn[i] = rectoHasta + cruzadosDesde[i];
+                ll diag = peso(empresasIzq[i + 1], empresasDer[i]);
+                ll horizontal = peso(empresasIzq[i], empresasDer[i]);
+                rectoHasta += diag + horizontal;
+            }
+            cambiaEn[edificios - 1] = rectoHasta + cruzadosDesde[edificios - 1];
+
+            ll largo = 0;
+            for (ll opcion : cambiaEn) {
+                largo = max(largo, opcion);
+            }
+
+            cout << largo << endl;
         }
     }
 }
