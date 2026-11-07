@@ -29,41 +29,65 @@ vector<bool> conexos(ll N, set<pair<ll, ll>> &conectados, vector<ll> &grados) {
     forrr(i, 1, N + 1) {
         if (grados[i] == 0) continue;
         q.push(i);
+        visitados[i] = true;
         break;
     }
     while (!q.empty()) {
         ll actual = q.front();
         q.pop();
-        if (visitados[actual]) continue;
-        visitados[actual] = true;
         forrr(i, 1, N + 1) {
             if (visitados[i]) continue;
             auto par = minmax(actual, i);
             if (conectados.count(par)) continue;
             q.push(i);
+            visitados[i] = true;
         }
     }
     return visitados;
 }
 
-bool hayCircuito(ll N, vector<ll> &grados, vector<bool> &componente) {
+bool hayCircuito(ll N, vector<ll> &grados, vector<bool> &componente, set<ll> incluye) {
     forrr(i, 1, N + 1) {
         if (grados[i] % 2) return false;
         if (!componente[i] && grados[i] != 0) return false;
     }
+    for (ll e : incluye) {
+        if (grados[e] == 0) return false;
+    }
     return true;
 }
 
-bool hayRecorrido(ll N, vector<ll> &grados, vector<bool> &componente, ll desde, ll hasta) {
+bool hayRecorrido(ll N, vector<ll> &grados, vector<bool> &componente, set<ll> extremos) {
     ll impares = 0;
     forrr(i, 1, N + 1) {
         if (grados[i] % 2) impares++;
         if (!componente[i] && grados[i] != 0) return false;
     }
     if (impares != 2) return false;
-    if (desde != -1 && grados[desde] % 2 == 0) return false;
-    if (hasta != -1 && grados[hasta] % 2 == 0) return false;
+    for (ll e : extremos) {
+        if (grados[e] % 2 == 0) return false;
+    }
     return true;
+}
+
+tuple<ll, ll, bool> leeLinea(ll largo, vector<ll> &grados, set<pair<ll, ll>> &conexiones) {
+    if (largo == 0) return {0, 0, true};
+    ll ant, act, primer, ultimo;
+    bool posible = true;
+    cin >> ant;
+    primer = ant;
+    forr(i, largo - 1) {
+        cin >> act;
+        auto [menor, mayor] = minmax(act, ant);
+        if (conexiones.count({menor, mayor})) posible = false;
+        if (menor == mayor) posible = false;
+        conexiones.insert({menor, mayor});
+        grados[menor]--;
+        grados[mayor]--;
+        ant = act;
+    }
+    ultimo = ant;
+    return {primer, ultimo, posible};
 }
 
 int main() {
@@ -79,63 +103,40 @@ int main() {
         bool posible = true;
 
         ll cantIni, cantFin;
-        ll extIni = -1, extFin = -1;
-        ll extremos = 0;
         cin >> cantIni;
-        if (cantIni != 0) {
-            extremos++;
-            ll ant;
-            cin >> ant;
-            forr(i, cantIni - 1) {
-                ll act;
-                cin >> act;
-                auto [menor, mayor] = minmax(act, ant);
-                if (conexiones.count({menor, mayor})) posible = false;
-                if (menor == mayor) posible = false;
-                conexiones.insert({menor, mayor});
-                grados[menor]--;
-                grados[mayor]--;
-                ant = act;
-            }
-            extIni = ant;
-        }
-
+        auto [_, extIni, sinError1] = leeLinea(cantIni, grados, conexiones);
+        posible = posible && sinError1;
         cin >> cantFin;
-        if (cantFin != 0) {
+        auto [extFin, __, sinError2] = leeLinea(cantFin, grados, conexiones);
+        posible = posible && sinError2;
+
+        set<ll> setExtremos;
+        ll extremos = 0;
+        if (extIni != 0) {
+            setExtremos.insert(extIni);
             extremos++;
-            ll ant;
-            cin >> ant;
-            extFin = ant;
-            forr(i, cantFin - 1) {
-                ll act;
-                cin >> act;
-                auto [menor, mayor] = minmax(act, ant);
-                if (conexiones.count({menor, mayor})) posible = false;
-                if (menor == mayor) posible = false;
-                conexiones.insert({menor, mayor});
-                grados[menor]--;
-                grados[mayor]--;
-                ant = act;
-            }
+        }
+        if (extFin != 0) {
+            setExtremos.insert(extFin);
+            extremos++;
         }
 
         bool vacio = true;
         forrr(i, 1, N) { vacio = vacio && grados[i] == 0; }
-        if (vacio && extremos == 2) {
-            posible = false;
-        }
-
         vector<bool> componente = conexos(N, conexiones, grados);
-        if (extremos == 2 && extIni == extFin) {
-            // Circuito euleriano
-            posible = posible && hayCircuito(N, grados, componente);
-        } else if (extremos == 2) {
-            // Recorrido euleriano
-            posible = posible && hayRecorrido(N, grados, componente, extIni, extFin);
-        } else {
-            // Recorrido o circuito euleriano
-            posible = posible && (hayCircuito(N, grados, componente) || hayRecorrido(N, grados, componente, extIni, extFin));
-        }
+
+        if (!vacio) {
+            if (extremos == 2 && extIni == extFin) {
+                // Circuito euleriano
+                posible = posible && hayCircuito(N, grados, componente, setExtremos);
+            } else if (extremos == 2) {
+                // Recorrido euleriano
+                posible = posible && hayRecorrido(N, grados, componente, setExtremos);
+            } else {
+                // Recorrido o circuito euleriano
+                posible = posible && (hayCircuito(N, grados, componente, setExtremos) || hayRecorrido(N, grados, componente, setExtremos));
+            }
+        } else if (extremos == 2) posible = false;
 
         if (posible) {
             cout << "Y" << endl;
