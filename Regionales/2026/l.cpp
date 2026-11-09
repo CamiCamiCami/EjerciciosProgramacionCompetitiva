@@ -16,25 +16,28 @@ using Digrafo = vector<vector<pair<ll, bool>>>;
 using Arbol = vector<vector<ll>>;
 
 pair<ll, ll> bfs(Grafo &g, vector<ll> torres) {
-    vector<ll> duenno(g.size(), -1), distancia(g.size(), 0), colisiones(g.size(), 0);
+    vector<ll> duenno(g.size(), -1), distancia(g.size(), 0);
     queue<pair<ll, ll>> q;
     for (ll torre : torres) {
         duenno[torre] = torre;
         for (ll vecino : g[torre]) q.push({vecino, torre});
     }
 
+    vector<ll> colisionesPar(g.size(), 1), colisionesImpar(g.size(), 0);
     bool hayContacto = false;
-    ll minDistancia;
+    ll minDistancia = 1e10;
 
     while (!hayContacto) {
-        ll capa = distancia[q.front().first];
-        while (!q.empty() && distancia[q.front().first] == capa) {
+        ll capa = distancia[q.front().second];
+        while (!q.empty() && distancia[q.front().second] == capa) {
             auto [actual, anterior] = q.front();
             q.pop();
             if (duenno[actual] != -1) {
                 hayContacto = true;
-                minDistancia = distancia[actual] + distancia[anterior] + 1;
-                colisiones[actual]++;
+                ll dist = distancia[actual] + distancia[anterior] + 1;
+                minDistancia = min(minDistancia, dist);
+                if (dist % 2 == 0) colisionesPar[actual]++;
+                else colisionesImpar[actual]++;
                 continue;
             }
             duenno[actual] = duenno[anterior];
@@ -48,12 +51,11 @@ pair<ll, ll> bfs(Grafo &g, vector<ll> torres) {
 
     ll pares = 0;
     if (minDistancia % 2 == 1) {
-        for (ll nroColisiones : colisiones) {
+        for (ll nroColisiones : colisionesImpar) {
             pares += nroColisiones;
         }
     } else {
-        for (ll nroColisiones : colisiones) {
-            nroColisiones++;
+        for (ll nroColisiones : colisionesPar) {
             pares += (nroColisiones * (nroColisiones - 1)) / 2;
         }
     }
